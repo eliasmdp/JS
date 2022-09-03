@@ -1,8 +1,6 @@
 // ------------------------------------------------
 // DECLARACIÓN FUNCIONES
 
-<h1>HOLA SOY EL INDEX 1</h1>
-
 let 
 i=true
 k=false
