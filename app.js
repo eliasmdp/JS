@@ -84,7 +84,3 @@ while (i != false) {
 }
 
 // ------------------------------------------------
-// NUEVO COMENTARIO
-// NUEVO COMENTARIO 2
-// NUEVO COMENTARIO 3
-// NUEVO COMENTARIO 4
