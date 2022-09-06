@@ -3,8 +3,8 @@
 
 let 
 i=true
-k=false
-op=0
+cart_noempty=false
+option=0
 cart_precio=0
 cart_cant=0
 
@@ -29,7 +29,7 @@ class Producto {
 function add_cart (p_precio, p_nombre) {
   cart_precio = cart_precio + p_precio;
   cart_cant=cart_cant+1;
-  k=true;
+  cart_noempty=true;
   alert(p_nombre + " agregado al carro!");
 }
 
@@ -37,24 +37,24 @@ function empty_cart () {
   alert("Te esperamos de vuelta pronto!");
   cart_precio = 0;
   cart_cant = 0;
+  cart_noempty=false;
   i=false;
-  k=false;  
 }
 
 function pay_cart() {
   alert("Gracias por tu compra! \n\nCantidad de productos: "+cart_cant+"\nTotal abonado: $ "+cart_precio);
   cart_precio = 0;
   cart_cant = 0;
+  cart_noempty=false;
   i=false;
-  k=false;  
 }
 
 // ------------------------------------------------
 // ADD TO CART
 
 while (i != false) {
-  op = prompt ("Hola! Por favor, seleccioná los Productos que quieras agregar al carro: \n\n1: Producto A - $ "+p1_precio+"\n2: Producto B - $ "+p2_precio+"\n3: Producto C - $ "+p3_precio+"\n4: Producto D - $ "+p4_precio+"\n\nY: Terminar y pagar \nN: Salir sin guardar");
-  switch (op) {
+  option = prompt ("Hola! Por favor, seleccioná los Productos que quieras agregar al carro: \n\n1: Producto A - $ "+p1_precio+"\n2: Producto B - $ "+p2_precio+"\n3: Producto C - $ "+p3_precio+"\n4: Producto D - $ "+p4_precio+"\n\nY: Terminar y pagar \nN: Salir sin guardar");
+  switch (option) {
     case "1":
       add_cart (p1_precio, p1_nombre);
     break;
@@ -68,7 +68,7 @@ while (i != false) {
       add_cart (p4_precio, p4_nombre);
     break
     case "y":
-      if (k==true) {
+      if (cart_noempty==true) {
         pay_cart();
       } else {
         alert("Aún no agregaste ningún producto!");
