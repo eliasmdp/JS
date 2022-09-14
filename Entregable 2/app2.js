@@ -1,5 +1,4 @@
 // ------------------------------------------------
-// DECLARACIÓN VARIABLES
 
 let 
 exit_menu=true
@@ -17,7 +16,6 @@ filter_result=[]
 filter_applied=false
 
 // ------------------------------------------------
-// CREACION CLASS "PRODUCT"
 
 class Product {
   constructor(id, name, price) {
@@ -28,7 +26,7 @@ class Product {
 }
 
 // ------------------------------------------------
-// LLENADO DE CATÁLOGO (ARRAY DE OBJETOS DE CLASS "PRODUCT")
+// LLENADO DE CATÁLOGO
 
 catalog.push(new Product(1,"Producto A",10))
 catalog.push(new Product(2,"Producto B",20))
@@ -36,7 +34,6 @@ catalog.push(new Product(3,"Producto C",30))
 catalog.push(new Product(4,"Producto D",40))
 
 // ------------------------------------------------
-// FUNCIONES
 
 function view_productlist (array) {
   product_list=""
