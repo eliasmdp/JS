@@ -140,16 +140,4 @@ filter_button.onclick=() => {filter_catalog()}
 let nofilter_button=document.getElementById("nofilter_button")
 nofilter_button.onclick=() => {nofilter_catalog()}
 
-/*
-//ALTERNATIVA PARA RECORRIDO DE LOS DIV Y LECTURA DE EVENTOS DE BOTON 
-let add_button=document.querySelectorAll(".add_button")
-index=0
-add_button2.forEach(function(button) {
-  const buttoncons = button.addEventListener=("click",function() {add_cart(catalog[index].id,catalog[index].name,catalog[index].price)})
-  //button.onclick=()=> {add_cart(catalog[index].id,catalog[index].name,catalog[index].price)}
-  console.log("soy "+index+" click");
-  index=index+1;
-})
-*/
-
 // ------------------------------------------------
