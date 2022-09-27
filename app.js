@@ -36,9 +36,10 @@ catalog.push(new Product("PROD_D","Producto D",40,100,1))
 // ------------------------------------------------
 // FUNCIONES
 
+// LO QUE HACE ESTA FUNCION ES REFRESCAR LA PRODUCT LIST PAGE (PLP), ES DECIR CREA LAS "CARDS" DE PRODUCTOS EN HTML. SE EJECUTA CUANDO SE CARGA LA PAGINA Y SI SE APLICA UN FILTRO.
 function refresh_plp (array) { 
   plp_products=""
-  document.getElementById("plp").innerHTML=""
+  document.getElementById("plp").innerHTML="" //"PLP" ES EL DIV PADRE QUE CONTIENE A TODOS LOS DIV HIJOS (LAS "CARDS" DE PRODUCTOS)
   for (product of array) {
     plp_products=document.createElement("div")
     plp_products.innerHTML=`<h4>${product.name} - $ ${product.price}</h4> <button class="add_button" id="${product.id}">Agregar</button>`
