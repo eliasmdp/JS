@@ -17,29 +17,35 @@
     
         <main>
 
-          <!--
 					<hr>
 
-					<div id="div_form">
+					<div>
             <h2>Login</h2>
-            <form action="/nombre_archivo_destino_en_servidor">
-              <input type="text" placeholder="Nombre" required>
-              <br>
-              <br>
-              <input type="text" placeholder="Email">
+              <!--
+              <form action="/nombre_archivo_destino_en_servidor">
+              -->
+              <div id="login_inputs">
+                <input id="login_name" type="text" placeholder="Nombre" required>
+                <br>
+                <br>
+                <input id="login_email" type="text" placeholder="Email">
+                <br>
+                <br>
+              </div>
+              <!--
               <p>Suscribirme al newslatter y recibir descuento de 10%</p>
-                <label>
-                  <input type="radio" id="rb1" value="1" name="grupo_todo_bien" checked>Si
-                </label>
-                <label>
-                  <input type="radio" id="rb2" value="2" name="grupo_todo_bien">No
-                </label>
-                <br>
-                <br>
-                <button>Ingresar</button>
+              <label>
+                <input type="radio" id="rb1" value="1" name="grupo_todo_bien" checked>Si
+              </label>
+              <label>
+                <input type="radio" id="rb2" value="2" name="grupo_todo_bien">No
+              </label>
+              -->
+              <button id="login_button">Registrarme</button>
+              <br>
+              <br>
             </form>
           </div>
-					-->
 
 					<hr>
 
@@ -66,13 +72,16 @@
 						<div id="cart_products"></div>
             <br>
             <div id="cart_resume">
-						  <p id="cart_cant"></p>
-						  <p id="cart_price"></p>
+						  <p id="cart_cant">Cantidad de Productos: 0</p>
+						  <p id="cart_price">Monto total: $ 0</p>
             </div>
             <div id="cart_buttons">
               <button id="empty_button">Vaciar</button>
 						  <button id="pay_button">Pagar</button>
             </div>
+            <!--
+            <p>Debes estar registrado para poder finalizar tu compra.</p>
+            -->  
           </div>
 
           <br>  

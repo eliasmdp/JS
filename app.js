@@ -1,88 +1,108 @@
-// ------------------------------------------------
-// VARIABLES
+/*
+BACKLOG BUGS:
+  1. ELIMINACION PRODUCTOS EN CART
+    a. SI NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "REMOVE_BUTTON"
+    b. AL ELIMINAR PRODUCTOS DESDE ARRIBA HACIA ABAJO, SE "DESORIENTA" RESPECTO A CUAL "REMOVE_BUTTON" SE ESTA CLICKEANDO. SI SE HACE F5 FUNCIONA OK.
+  2. MODIFICACION CANTIDADES DE PRODUCTOS EN CART
+    a. SI NO SE HACCE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADDCANT_BUTTON" Y "SUBCANT_BUTTON"
+  3. FILTRADO PRODUCTOS EN PLP
+    a. SI LUEGO DE FILTRAR NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
+    
+BACKLOG FUNCIONALIDADES:
+  1. VALIDACION STOCK AL AL AGREGAR PRODUCTO
+  2. CARGA DE PRODUCTS VIA JSON
+  3. CONVALIDACION POR IGUAL MAYUS/MINUS AL FILTRAR PLP
+*/
 
-let
-catalog=[]
-cart=[]
-index=1
-cart_price=0
-add_id=0
-add_name=0
-add_price=0
-filter=false
-
 // ------------------------------------------------
-// CLASS PRODUCT
+// CREACION DE CATALOGO
 
 class Product {
-  constructor(id, name, price) {
+  constructor(id, name, price, stock, cant) {
     this.id=id;
     this.name=name;
     this.price=price;
+    this.stock=stock;
+    this.cant=cant;
   }
 }
 
-// ------------------------------------------------
-// CATÁLOGO (ARRAY DE PRODUCTs)
-
-catalog.push(new Product(1,"Producto A",10))
-catalog.push(new Product(2,"Producto B",20))
-catalog.push(new Product(3,"Producto C",30))
-catalog.push(new Product(4,"Producto D",40))
+let catalog=[]
+catalog.push(new Product("PROD_A","Producto A",10,100,1))
+catalog.push(new Product("PROD_B","Producto B",20,100,1))
+catalog.push(new Product("PROD_C","Producto C",30,100,1))
+catalog.push(new Product("PROD_D","Producto D",40,100,1))
 
 // ------------------------------------------------
 // FUNCIONES
 
-function refresh_plp (array) { //AL EJECUTAR ESTA FUNCION POR 2DA VEZ, DEJAN DE RESPONDER LOS ONCLICK DE LOS NUEVOS DIV
+function refresh_plp (array) { 
   plp_products=""
-  document.getElementById("plp").innerHTML="" //SI NO BORRO DIV ORIGINALES, SUS ONCLICK SIGUEN RESPONDIENDO OK
-  index=1
+  document.getElementById("plp").innerHTML=""
   for (product of array) {
-    plp_products=document.createElement("div") //EL PROBLEMA ES CON LOS DIV CREADOS AL EJECUTAR LA FUNCION POR 2DA VEZ
-    plp_products.innerHTML=`<h4>${product.name} - $ ${product.price}</h4> <button class="add_button" id="${index-1}">Agregar</button>`
+    plp_products=document.createElement("div")
+    plp_products.innerHTML=`<h4>${product.name} - $ ${product.price}</h4> <button class="add_button" id="${product.id}">Agregar</button>`
     plp.append(plp_products)
-    index = index + 1;
   }
 }
 
-function add_cart (add_id, add_name, add_price) {
-  cart.push(new Product(add_id,add_name,add_price))
-  alert(add_name + " agregado al carro!");
-  sum_price (cart);
-  cart_products_entry=document.createElement("div")
-  cart_products_entry.innerHTML="<p>"+ cart[cart.length-1].name +" - $ " + cart[cart.length-1].price + "<p>"
-  cart_products.append(cart_products_entry)
-  refresh_cart();
-}
-
-function sum_price (array) {
-  cart_price=0
-  index=1
-  for (product of array) {
-    cart_price = cart_price + product.price;
-    index = index + 1;
+function add_cart (add_id, add_name, add_price, add_stock, add_cant) {
+  let index=cart.findIndex(i => i.id===add_id)
+  if (index!=-1) {
+    cart[index].cant=cart[index].cant + add_cant
+    cart_products_entrydetails=document.getElementById("entrydetails_"+add_id)
+    cart_products_entrydetails.innerText=cart[index].name + " - $ " + cart[index].price + " (Cantidad: " + cart[index].cant + ")"
+  } else {
+    cart.push(new Product(add_id,add_name,add_price,add_stock,add_cant))
+    cart_products_entry=document.createElement("div")
+    cart_products_entry.id=`entry_${add_id}`
+    cart_products_entry.innerHTML=`<p id="entrydetails_${add_id}">${cart[cart.length-1].name} - $ ${cart[cart.length-1].price} (Cantidad: ${cart[cart.length-1].cant})</p> <button class="subCant_button" id="sub_${add_id}">-</button> <button class="addCant_button" id="add_${add_id}">+</button> <button class="remove_button" id="remove_${add_id}">remove_${add_id}</button>`
+    cart_products.append(cart_products_entry)
   }
+  alert(add_name + " agregado al carro!")
+  localStorage.setItem("cart",JSON.stringify(cart))
+  refresh_cart(cart)
 }
 
 function refresh_cart (array) {
-  document.getElementById("cart_cant").innerText="Cantidad de Productos: "+cart.length
+  cart_price=0
+  cart_cant=0
+  for (product of array) {
+    cart_cant = cart_cant + product.cant
+    cart_price = cart_price + product.price*product.cant
+  }
+  document.getElementById("cart_cant").innerText="Cantidad de Productos: "+cart_cant
   document.getElementById("cart_price").innerText="Monto total: $ "+cart_price
+  //CHEQUEO VARIABLES EN CONSOLA
+  let remove_button=document.getElementsByClassName("remove_button")
+  console.log("---------------------------------------------");
+  console.log("CART.LENGTH: "+cart.length);
+  console.log("REMOVE_BTN.LENGTH: "+remove_button.length);
+  for (let j=0; j < cart.length; j++) {
+    console.log("CART["+j+"].ID: "+cart[j].id+" // REMOVE_BTN["+j+"].ID: "+remove_button[j].id);
+  }
+  //
 }  
 
 function pay_cart() {
   if (cart.length>0) {
-    alert("Gracias por tu compra! \n\nCantidad de productos: "+cart.length+"\nTotal abonado: $ "+cart_price);
-    empty_cart();
+    if (logued==false) {
+      alert("Debes registrarte en el sitio para poder finalizar tu compra.")
+    } else {  
+      alert("Muchas gracias por tu compra! \n\nCantidad de productos: "+cart_cant+"\nTotal abonado: $ "+cart_price);
+      empty_cart();
+    }
   } else {
-    alert("Aún no agregaste ningún producto!");
+    alert("Aún no has agregado ningún producto!");
   }
 }
 
 function empty_cart() {
+  localStorage.removeItem("cart")
   cart = [];
-  cart_products.innerText="";
-  document.getElementById("cart_cant").innerText=""
-  document.getElementById("cart_price").innerText=""
+  cart_products.innerHTML="";
+  document.getElementById("cart_cant").innerText="Cantidad de Productos: 0"
+  document.getElementById("cart_price").innerText="Monto total: $ 0"
 }
 
 function filter_catalog () {
@@ -107,49 +127,172 @@ function nofilter_catalog() {
   filter=false
 }
 
-// ------------------------------------------------
-// PLP + CART
-
-refresh_plp(catalog) //¿CONVIENE TENER UNA CANTIDA FIJA DE "CARDS DE PRODUCTO" Y LUEGO LLENARLAS O GENERARLAS DINAMICAMENTE SEGUN PRODUCTOS CREADOS?
-
-let 
-cart_products=document.getElementById("cart_products")
-add_button=document.getElementsByClassName("add_button")
-
-if (filter==false) { //VER: AUTOMATIZAR PARA QUE AGREGUE SEGUN BOTON CLICKED
-  add_button[0].onclick=()=> {add_cart(catalog[0].id,catalog[0].name,catalog[0].price)}
-  add_button[1].onclick=()=> {add_cart(catalog[1].id,catalog[1].name,catalog[1].price)}
-  add_button[2].onclick=()=> {add_cart(catalog[2].id,catalog[2].name,catalog[2].price)}
-  add_button[3].onclick=()=> {add_cart(catalog[3].id,catalog[3].name,catalog[3].price)}
-} else {
-  add_button[0].onclick=()=> {add_cart(filter_result[0].id,filter_result[0].name,filter_result[0].price)}
-  add_button[1].onclick=()=> {add_cart(filter_result[1].id,filter_result[1].name,filter_result[1].price)}
-  add_button[2].onclick=()=> {add_cart(filter_result[2].id,filter_result[2].name,filter_result[2].price)}
-  add_button[3].onclick=()=> {add_cart(filter_result[3].id,filter_result[3].name,filter_result[3].price)}
+function login(input_name,input_email) {
+  if (input_name.value=="" || input_email.value=="") {
+    alert("Debes completar tu Nombre y tu Email.")
+  } else if (input_email.value.includes("@")===false) {
+    alert("El Email ingresado no es válido.")
+  } else {
+    alert("Registro exitoso. \n\nBienvenido, "+input_name.value+"!")
+    logued=true
+    localStorage.setItem("login_name",input_name.value)
+    localStorage.setItem("login_email",input_email.value)
+    login_inputs.style.display="none"
+    input_name.value=""
+    input_email.value=""
+    login_button.innerText="Cerrar sesión"
+  }
 }
 
-let pay_button=document.getElementById("pay_button")
-pay_button.onclick=() => {pay_cart()} 
+function unlogin() {
+  logued=false
+  localStorage.removeItem("login_name")
+  localStorage.removeItem("login_email")
+  login_inputs.style.display=""
+  login_button.innerText="Registrarme"
+}
 
+// ------------------------------------------------
+// VERIFICACION LOGIN EN LOCALSTORAGE
+
+let login_inputs=document.getElementById("login_inputs")
+let login_name=document.getElementById("login_name")
+let login_email=document.getElementById("login_email")
+let login_button=document.getElementById("login_button")
+let user_saved=localStorage.getItem("login_name")
+let logued
+if (user_saved) {
+  logued=true
+  login_inputs.style.display="none"
+  login_name.value=""
+  login_email.value=""
+  login_button.innerText="Cerrar sesión"
+} else {
+  logued=false
+  login_inputs.style.display=""
+  login_button.innerText="Registrarme"  
+}
+
+// ------------------------------------------------
+// VERIFICACION CART EN LOCALSTORAGE
+
+let cart=[]
+let cart_price=0
+let cart_cant=0
+let cart_products=document.getElementById("cart_products")
+let cart_saved=localStorage.getItem("cart")
+if (cart_saved) {
+  cart=JSON.parse(cart_saved)
+  for (entry of cart) {
+    cart_products_entry=document.createElement("div")
+    cart_products_entry.id=`entry_${entry.id}`
+    cart_products_entry.innerHTML=`<p id="entrydetails_${entry.id}">${entry.name} - $ ${entry.price} (Cantidad: ${entry.cant})</p> <button class="subCant_button" id="sub_${entry.id}">-</button> <button class="addCant_button" id="add_${entry.id}">+</button> <button class="remove_button" id="remove_${entry.id}">remove_${entry.id}</button>`
+    cart_products.append(cart_products_entry)
+  }
+  refresh_cart(cart)
+}
+
+// ------------------------------------------------
+// CARGA PRODUCT LIST PAGE (PLP)
+
+refresh_plp(catalog)
+
+// ------------------------------------------------
+// EVENTOS
+
+// ADD_BUTTON.ONCLICK
+// (!) BUG 3a: SI LUEGO DE EJECUTAR LA FUNCION "FILTER_CATALOG" NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
+let filter=false
+let add_button=document.getElementsByClassName("add_button")
+for (let i=0; i < add_button.length; i++) {
+  add_button[i].onclick=()=> {
+    if (filter===false) {
+      add_id=catalog[i].id
+      add_name=catalog[i].name
+      add_price=catalog[i].price
+      add_stock=catalog[i].stock
+      add_cant=catalog[i].cant
+    } else {
+      add_id=filter_result[i].id
+      add_name=filter_result[i].name
+      add_price=filter_result[i].price
+      add_stock=filter_result[i].stock
+      add_cant=filter_result[i].cant
+    }
+    add_cart(add_id,add_name,add_price,add_stock,add_cant)
+  }
+}
+
+// REMOVE_BUTTON.ONCLICK
+// (!) BUG 1a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "REMOVE_BUTTON" RESPONDAN 
+let remove_button=document.getElementsByClassName("remove_button")
+for (let i=0; i < remove_button.length; i++) {
+  remove_button[i].onclick=()=> {
+    //CHEQUEO VARIABLES EN CONSOLA
+    console.log("---------------------------------------------");
+    console.log("REMOVE_BTN.LENGTH:"+remove_button.length)
+    console.log("INDEX REMOVE_BTN APRETADO: "+i)
+    console.log("INDEX REMOVE_BTN APRETADO: "+i+" // REMOVE_BTN["+i+"].ID: "+remove_button[i].id);
+    //
+    cart_products_entry=document.getElementById("entry_"+cart[i].id) // (!) BUG 1b: SI VOY ELIMINANDO PRODUCTOS DEL CARRITO DE ARRIBA HACIA ABAJO, SE "DESORIENTA" RESPECTO A QUE BOTTON PRESIONO. SI ACTUALIZO PAGINA, FUNCIONA OK
+    cart_products_entry.innerHTML=""
+    cart.splice(i,1)
+    localStorage.setItem("cart",JSON.stringify(cart))
+    refresh_cart(cart)
+  }
+}
+
+// ADDCANT_BUTTON.ONCLICK
+// (!) BUG 2a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "ADDCANT_BUTTON" RESPONDAN
+let addCant_button=document.getElementsByClassName("addCant_button")
+for (let i=0; i < addCant_button.length; i++) {
+  addCant_button[i].onclick=()=> {
+    cart[i].cant=cart[i].cant+1
+    cart_products_entrydetails=document.getElementById("entrydetails_"+cart[i].id)
+    cart_products_entrydetails.innerText=cart[i].name + " - $ " + cart[i].price + " (Cantidad: " + cart[i].cant + ")"
+    localStorage.setItem("cart",JSON.stringify(cart))
+    refresh_cart(cart)
+  }
+}
+
+// ADDCANT_BUTTON.ONCLICK
+// BUG 2a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "ADDCANT_BUTTON" RESPONDAN
+let subCant_button=document.getElementsByClassName("subCant_button")
+for (let i=0; i < subCant_button.length; i++) {
+  subCant_button[i].onclick=()=> {
+    if (cart[i].cant>1) {
+      cart[i].cant=cart[i].cant-1
+      cart_products_entrydetails=document.getElementById("entrydetails_"+cart[i].id)
+      cart_products_entrydetails.innerText=cart[i].name + " - $ " + cart[i].price + " (Cantidad: " + cart[i].cant + ")"
+      localStorage.setItem("cart",JSON.stringify(cart))
+      refresh_cart(cart)
+    }
+  }
+}
+
+// PAY_BUTTON.ONCLICK
+let pay_button=document.getElementById("pay_button")
+pay_button.onclick=() => {pay_cart()}
+
+// EMPTY_BUTTON.ONCLICK
 let empty_button=document.getElementById("empty_button")
 empty_button.onclick=() => {empty_cart()}
 
+// LOGIN_BUTTON.ONLICK
+login_button.onclick=() => {
+  if (logued==false) {
+    login(login_name,login_email)
+  } else {
+    unlogin()
+  }
+}
+
+// FILTER_BUTTON.ONCLICK
 let filter_button=document.getElementById("filter_button")
 filter_button.onclick=() => {filter_catalog()}
 
+// NOFILTER_BUTTON.ONCLICK
 let nofilter_button=document.getElementById("nofilter_button")
 nofilter_button.onclick=() => {nofilter_catalog()}
-
-/*
-//ALTERNATIVA PARA RECORRIDO DE LOS DIV Y LECTURA DE EVENTOS DE BOTON 
-let add_button=document.querySelectorAll(".add_button")
-index=0
-add_button2.forEach(function(button) {
-  const buttoncons = button.addEventListener=("click",function() {add_cart(catalog[index].id,catalog[index].name,catalog[index].price)})
-  //button.onclick=()=> {add_cart(catalog[index].id,catalog[index].name,catalog[index].price)}
-  console.log("soy "+index+" click");
-  index=index+1;
-})
-*/
 
 // ------------------------------------------------
