@@ -1,13 +1,4 @@
 /*
-BACKLOG BUGS:
-  1. ELIMINACION PRODUCTOS EN CART
-    a. SI NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "REMOVE_BUTTON"
-    b. AL ELIMINAR PRODUCTOS DESDE ARRIBA HACIA ABAJO, SE "DESORIENTA" RESPECTO A CUAL "REMOVE_BUTTON" SE ESTA CLICKEANDO. SI SE HACE F5 FUNCIONA OK.
-  2. MODIFICACION CANTIDADES DE PRODUCTOS EN CART
-    a. SI NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADDCANT_BUTTON" Y "SUBCANT_BUTTON"
-  3. FILTRADO PRODUCTOS EN PLP
-    a. SI LUEGO DE FILTRAR NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
-    
 BACKLOG FUNCIONALIDADES:
   1. VALIDACION STOCK AL AL AGREGAR PRODUCTO
   2. CARGA DE PRODUCTS VIA JSON
@@ -73,15 +64,6 @@ function refresh_cart (array) {
   }
   document.getElementById("cart_cant").innerText="Cantidad de Productos: "+cart_cant
   document.getElementById("cart_price").innerText="Monto total: $ "+cart_price
-  //CHEQUEO VARIABLES EN CONSOLA
-  let remove_button=document.getElementsByClassName("remove_button")
-  console.log("---------------------------------------------");
-  console.log("CART.LENGTH: "+cart.length);
-  console.log("REMOVE_BTN.LENGTH: "+remove_button.length);
-  for (let j=0; j < cart.length; j++) {
-    console.log("CART["+j+"].ID: "+cart[j].id+" // REMOVE_BTN["+j+"].ID: "+remove_button[j].id);
-  }
-  //
 }  
 
 function pay_cart() {
@@ -219,7 +201,6 @@ if (filter_saved) {
 // EVENTOS
 
 // ADD_BUTTON.ONCLICK
-// (!) BUG 3a: SI LUEGO DE EJECUTAR LA FUNCION "FILTER_CATALOG" NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
 let add_button=document.getElementsByClassName("add_button")
 for (let i=0; i < add_button.length; i++) {
   add_button[i].onclick=()=> {
@@ -242,17 +223,10 @@ for (let i=0; i < add_button.length; i++) {
 }
 
 // REMOVE_BUTTON.ONCLICK
-// (!) BUG 1a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "REMOVE_BUTTON" RESPONDAN 
 let remove_button=document.getElementsByClassName("remove_button")
 for (let i=0; i < remove_button.length; i++) {
   remove_button[i].onclick=()=> {
-    //CHEQUEO VARIABLES EN CONSOLA
-    console.log("---------------------------------------------");
-    console.log("REMOVE_BTN.LENGTH:"+remove_button.length)
-    console.log("INDEX REMOVE_BTN APRETADO: "+i)
-    console.log("INDEX REMOVE_BTN APRETADO: "+i+" // REMOVE_BTN["+i+"].ID: "+remove_button[i].id);
-    //
-    cart_products_entry=document.getElementById("entry_"+cart[i].id) // (!) BUG 1b: SI VOY ELIMINANDO PRODUCTOS DEL CARRITO DE ARRIBA HACIA ABAJO, SE "DESORIENTA" RESPECTO A QUE BOTTON PRESIONO. SI ACTUALIZO PAGINA, FUNCIONA OK
+    cart_products_entry=document.getElementById("entry_"+cart[i].id)
     cart_products_entry.innerHTML=""
     cart.splice(i,1)
     localStorage.setItem("cart",JSON.stringify(cart))
@@ -262,7 +236,6 @@ for (let i=0; i < remove_button.length; i++) {
 }
 
 // ADDCANT_BUTTON.ONCLICK
-// (!) BUG 2a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "ADDCANT_BUTTON" RESPONDAN
 let addCant_button=document.getElementsByClassName("addCant_button")
 for (let i=0; i < addCant_button.length; i++) {
   addCant_button[i].onclick=()=> {
@@ -275,7 +248,6 @@ for (let i=0; i < addCant_button.length; i++) {
 }
 
 // ADDCANT_BUTTON.ONCLICK
-// BUG 2a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "ADDCANT_BUTTON" RESPONDAN
 let subCant_button=document.getElementsByClassName("subCant_button")
 for (let i=0; i < subCant_button.length; i++) {
   subCant_button[i].onclick=()=> {
