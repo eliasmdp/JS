@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Proyecto Js - Monterubbianesi</title>
+    </head>
+
+    <body>
+      
+        <div id="header">
+          <h1>Proyecto Js</h1>
+        </div>
+    
+        <main>
+
+					<hr>
+
+					<div>
+            <h2>Login</h2>
+              <div id="login_inputs">
+                <input id="login_name" type="text" placeholder="Nombre" required>
+                <br>
+                <br>
+                <input id="login_email" type="text" placeholder="Email">
+                <br>
+                <br>
+              </div>
+              <button id="login_button">Registrarme</button>
+              <br>
+              <br>
+            </form>
+          </div>
+
+					<hr>
+
+          <div id="plp_header">
+          <h2>Product List Page</h2>
+            <div>
+              <hr>
+              <input id="filter_param" type="text" placeholder="Filtro">
+              <button id="filter_button">Filtrar</button>
+              <button id="nofilter_button">Borrar</button>
+              <hr>
+            </div>
+          </div>  
+
+					<div id="plp">
+            <!--ACÁ SE CREAN LOS DIV QUE REPRESENTAN LAS CARD DE PRODUCTOS-->
+          </div>
+          
+          <br>
+          <hr>
+
+					<div id="cartpage">
+						<h2>Cart</h2>
+						<div id="cart_products"></div>
+            <br>
+            <div id="cart_resume">
+						  <p id="cart_cant">Cantidad de Productos: 0</p>
+						  <p id="cart_price">Monto total: $ 0</p>
+            </div>
+            <div id="cart_buttons">
+              <button id="empty_button">Vaciar</button>
+						  <button id="pay_button">Pagar</button>
+            </div>
+            <!--
+            <p>Debes estar registrado para poder finalizar tu compra.</p>
+            -->  
+          </div>
+
+          <br>  
+					<hr>
+
+				</main>
+    
+        <footer>
+          <small><p class="footer_text">Elias Monterubbianesi</p></small>
+        </footer>
+
+        <!--SWEET ALERT-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        
+        <script src="app5.js"></script>
+      
+      </body>
+
+</html>
