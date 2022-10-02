@@ -9,9 +9,10 @@ BACKLOG BUGS:
     a. SI LUEGO DE FILTRAR NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
     
 BACKLOG FUNCIONALIDADES:
-  1. VALIDACION STOCK AL AL AGREGAR PRODUCTO
-  2. CARGA DE PRODUCTS VIA JSON
-  3. CONVALIDACION POR IGUAL MAYUS/MINUS AL FILTRAR PLP
+  1. MODAL LOGIN (jquerymodal)
+  2. VALIDACION STOCK AL AL AGREGAR PRODUCTO
+  3. CARGA DE PRODUCTS VIA JSON
+  4. CONVALIDACION POR IGUAL MAYUS/MINUS AL FILTRAR PLP
 */
 
 // ------------------------------------------------
@@ -60,9 +61,13 @@ function add_cart (add_id, add_name, add_price, add_stock, add_cant) {
     cart_products_entry.innerHTML=`<p id="entrydetails_${add_id}">${cart[cart.length-1].name} - $ ${cart[cart.length-1].price} (Cantidad: ${cart[cart.length-1].cant})</p> <button class="subCant_button" id="sub_${add_id}">-</button> <button class="addCant_button" id="add_${add_id}">+</button> <button class="remove_button" id="remove_${add_id}">Eliminar</button>`
     cart_products.append(cart_products_entry)
   }
-  alert(add_name + " agregado al carro!")
   localStorage.setItem("cart",JSON.stringify(cart))
   refresh_cart(cart)
+  swal({
+    text: "¡" + add_name + " agregado al carro!",
+    icon: "success",
+    button: "Entendido"
+  }).then(function(){window.location.reload(true)})
 }
 
 function refresh_cart (array) {
@@ -88,13 +93,26 @@ function refresh_cart (array) {
 function pay_cart() {
   if (cart.length>0) {
     if (logued==false) {
-      alert("Debes registrarte en el sitio para poder finalizar tu compra.")
+      swal({
+        text: "Debes registrarte en el sitio para poder finalizar tu compra",
+        icon: "warning",
+        button: false
+      })
     } else {  
-      alert("Muchas gracias por tu compra! \n\nCantidad de productos: "+cart_cant+"\nTotal abonado: $ "+cart_price);
+      swal({
+        title: "Pago exitoso",
+        text: "Cantidad de productos: "+cart_cant+"\nTotal abonado: $ "+cart_price,
+        icon: "success",
+        button: "Entendido"
+      })
       empty_cart();
     }
   } else {
-    alert("Aún no has agregado ningún producto!");
+    swal({
+      text: "¡Aún no has agregado ningún producto!",
+      icon: "warning",
+      button: false
+    })
   }
 }
 
@@ -115,11 +133,17 @@ function filter_catalog () {
       sessionStorage.setItem("filter_result",JSON.stringify(filter_result))
       sessionStorage.setItem("filter_param", filter_param.value)
       refresh_plp (filter_result)
+      window.location.reload(true)
     } else {
-      alert("Sin resultados!")
+      swal({
+        text: "¡Sin resultados!",
+        icon: "error",
+        button: false
+      })
     }
   } else {
     refresh_plp(catalog)
+    window.location.reload(true)
   }
 }
 
@@ -130,15 +154,29 @@ function nofilter_catalog() {
   sessionStorage.removeItem("filter_param")
   filter_param.value=""
   refresh_plp(catalog)
+  window.location.reload(true)
 }
 
 function login(input_name,input_email) {
   if (input_name.value=="" || input_email.value=="") {
-    alert("Debes completar tu Nombre y tu Email.")
+    swal({
+      text: "Debes completar tu Nombre y tu Email",
+      icon: "warning",
+      button: false
+    })
   } else if (input_email.value.includes("@")===false) {
-    alert("El Email ingresado no es válido.")
+    swal({
+      text: "El Email ingresado no es válido",
+      icon: "warning",
+      button: false
+    })
   } else {
-    alert("Registro exitoso. \n\nBienvenido, "+input_name.value+"!")
+    swal({
+      title: "Registro exitoso",
+      text: "¡Bienvenido, "+input_name.value+"!",
+      icon: "success",
+      button: "Empezar"
+    })
     logued=true
     localStorage.setItem("login_name",input_name.value)
     localStorage.setItem("login_email",input_email.value)
@@ -238,7 +276,6 @@ for (let i=0; i < add_button.length; i++) {
       add_cant=filter_result[i].cant
     }
     add_cart(add_id,add_name,add_price,add_stock,add_cant)
-    window.location.reload(true)
   }
 }
 
@@ -309,16 +346,10 @@ login_button.onclick=() => {
 
 // FILTER_BUTTON.ONCLICK
 let filter_button=document.getElementById("filter_button")
-filter_button.onclick=() => {
-  filter_catalog()
-  window.location.reload(true)
-}
+filter_button.onclick=() => {filter_catalog()}
 
 // NOFILTER_BUTTON.ONCLICK
 let nofilter_button=document.getElementById("nofilter_button")
-nofilter_button.onclick=() => {
-  nofilter_catalog()
-  window.location.reload(true)
-}
+nofilter_button.onclick=() => {nofilter_catalog()}
 
 // ------------------------------------------------
