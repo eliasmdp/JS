@@ -13,6 +13,7 @@ class Product {
 
 let catalog=[]
 async function load_products () {
+  // VALIDO ORDEN DE EJECUCION EN CONSOLA
   console.log("(!) SOY LA FUNCION LOAD_PRODUCTS INICIANDO EJECUCION")
   const resp = await fetch("products.json")
   const data = await resp.json()
