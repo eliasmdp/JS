@@ -1,19 +1,3 @@
-/*
-BACKLOG BUGS:
-  1. ELIMINACION PRODUCTOS EN CART
-    a. SI NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "REMOVE_BUTTON"
-    b. AL ELIMINAR PRODUCTOS DESDE ARRIBA HACIA ABAJO, SE "DESORIENTA" RESPECTO A CUAL "REMOVE_BUTTON" SE ESTA CLICKEANDO.
-  2. MODIFICACION CANTIDADES DE PRODUCTOS EN CART
-    a. SI NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADDCANT_BUTTON" Y "SUBCANT_BUTTON"
-  3. FILTRADO PRODUCTOS EN PLP
-    a. SI LUEGO DE FILTRAR NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
-    
-BACKLOG FUNCIONALIDADES:
-  1. MODAL LOGIN (swal)
-  2. VALIDACION STOCK AL AL AGREGAR PRODUCTO
-  3. CARGA DE PRODUCTS Y STOCKS VIA JSON
-*/
-
 // ------------------------------------------------
 // CREACION DE CATALOGO
 
@@ -35,38 +19,14 @@ async function load_products () {
   await data.forEach((product) => {
     catalog.push(new Product(product.id, product.name, product.price, product.stock, product.cant))
   })
-  console.log("(!) SOY LA FUNCION LOAD_PRODUCTS TERMINANDO EJECUCION") // ¿Por qué el resto del código no espera a que termine la ejecución de load_products?
+  console.log("(!) SOY LA FUNCION LOAD_PRODUCTS TERMINANDO EJECUCION") // Resto del código no espera a que termine ejecución de load_products
 }
 load_products()
-
-/*
-fetch("products.json")
-  .then((resp) => resp.json())
-  .then((data) => {
-    data.forEach((product) => {
-    catalog.push(new Product(product.id, product.name, product.price, product.stock, product.cant))
-    console.log("POS: "+product.name);
-    });
-  })
-*/
-
-/*
-// ACTUALIZAR STOCK EN PRODUCTS.JSON
-fetch("/products.json", {
-  method:"POST",
-  body: JSON.stringify({
-    stock: new_stock
-  }),
-  headers: {
-    "Content-type":"application/json; charset=UTF=8",
-  },
-})
-*/
 
 // ------------------------------------------------
 // FUNCIONES
 
-// LO QUE HACE ESTA FUNCION ES REFRESCAR LA PRODUCT LIST PAGE (PLP), ES DECIR CREA LAS "CARDS" DE PRODUCTOS EN HTML
+// REFRESH_PLP ACTUALIZA LA PRODUCT LIST PAGE (PLP), ES DECIR CREA LAS "CARDS" DE PRODUCTOS EN HTML
 function refresh_plp (array) {
   // VALIDO ORDEN DE EJECUCION EN CONSOLA
   console.log("SOY LA FUNCION REFRESH_PLP EJECUTANDOSE")
@@ -84,12 +44,10 @@ function add_cart (add_id, add_name, add_price, add_stock, add_cant) {
   console.log("SOY LA FUNCION ADD_CART EJECUTANDOSE")
   let index=cart.findIndex(i => i.id===add_id)
   if (index!=-1) {
-    //catalog[index].stock=catalog[index].stock-1
     cart[index].cant=cart[index].cant + add_cant
     cart_products_entrydetails=document.getElementById("entrydetails_"+add_id)
     cart_products_entrydetails.innerText=cart[index].name + " | $ " + cart[index].price + " | Cantidad: " + cart[index].cant
   } else {
-    //catalog[index].stock=catalog[index].stock-1
     cart.push(new Product(add_id,add_name,add_price,add_stock,add_cant))
     cart_products_entry=document.createElement("div")
     cart_products_entry.id=`entry_${add_id}`
@@ -97,7 +55,6 @@ function add_cart (add_id, add_name, add_price, add_stock, add_cant) {
     cart_products.append(cart_products_entry)
   }
   localStorage.setItem("cart",JSON.stringify(cart))
-  //DEBO GUARDAR STOCK, Y TRAER AL HACER REFRESH CATALOG (!)
   refresh_cart(cart)
 
   swal({
@@ -118,14 +75,7 @@ function refresh_cart (array) {
   }
   document.getElementById("cart_cant").innerText="Cantidad de Productos: "+cart_cant
   document.getElementById("cart_price").innerText="Monto total: $ "+cart_price
-  //CHEQUEO VARIABLES EN CONSOLA
   let remove_button=document.getElementsByClassName("remove_button")
-  //console.log("---------------------------------------------");
-  //console.log("CART.LENGTH: "+cart.length);
-  //console.log("REMOVE_BTN.LENGTH: "+remove_button.length);
-  //for (let j=0; j < cart.length; j++) {
-    //console.log("CART["+j+"].ID: "+cart[j].id+" // REMOVE_BTN["+j+"].ID: "+remove_button[j].id);
-  //}
 }  
 
 function pay_cart() {
@@ -304,7 +254,6 @@ if (filter_saved) {
 // EVENTOS
 
 // ADD_BUTTON.ONCLICK
-// (!) BUG 3a: SI LUEGO DE EJECUTAR LA FUNCION "FILTER_CATALOG" NO SE HACE F5, NO SE RECONOCE EVENTO ONCLICK SOBRE LOS "ADD_BUTTON"
 let add_button=document.getElementsByClassName("add_button")
 for (let i=0; i < add_button.length; i++) {
   add_button[i].onclick=()=> {
@@ -325,18 +274,11 @@ for (let i=0; i < add_button.length; i++) {
   }
 }
 
-// REMOVE_BUTTON.ONCLICK
-// (!) BUG 1a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "REMOVE_BUTTON" RESPONDAN 
+// REMOVE_BUTTON.ONCLICK 
 let remove_button=document.getElementsByClassName("remove_button")
 for (let i=0; i < remove_button.length; i++) {
   remove_button[i].onclick=()=> {
-    //CHEQUEO VARIABLES EN CONSOLA
-    console.log("---------------------------------------------");
-    console.log("REMOVE_BTN.LENGTH:"+remove_button.length)
-    console.log("INDEX REMOVE_BTN APRETADO: "+i)
-    console.log("INDEX REMOVE_BTN APRETADO: "+i+" // REMOVE_BTN["+i+"].ID: "+remove_button[i].id);
-    //
-    cart_products_entry=document.getElementById("entry_"+cart[i].id) // (!) BUG 1b: SI VOY ELIMINANDO PRODUCTOS DEL CARRITO DE ARRIBA HACIA ABAJO, SE "DESORIENTA" RESPECTO A QUE BOTTON PRESIONO. SI ACTUALIZO PAGINA, FUNCIONA OK
+    cart_products_entry=document.getElementById("entry_"+cart[i].id)
     cart_products_entry.innerHTML=""
     cart.splice(i,1)
     localStorage.setItem("cart",JSON.stringify(cart))
@@ -346,7 +288,6 @@ for (let i=0; i < remove_button.length; i++) {
 }
 
 // ADDCANT_BUTTON.ONCLICK
-// (!) BUG 2a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "ADDCANT_BUTTON" RESPONDAN
 let addCant_button=document.getElementsByClassName("addCant_button")
 for (let i=0; i < addCant_button.length; i++) {
   addCant_button[i].onclick=()=> {
@@ -359,7 +300,6 @@ for (let i=0; i < addCant_button.length; i++) {
 }
 
 // ADDCANT_BUTTON.ONCLICK
-// BUG 2a: REQUIERE ACTUALIZAR PARA QUE LOS NUEVOS "ADDCANT_BUTTON" RESPONDAN
 let subCant_button=document.getElementsByClassName("subCant_button")
 for (let i=0; i < subCant_button.length; i++) {
   subCant_button[i].onclick=()=> {
